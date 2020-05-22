@@ -38,7 +38,6 @@ module.exports = function (keycloak) {
           pathname: request.path,
           query: request.query
         };
-        console.log(urlParts)
 
         delete urlParts.query.code;
         delete urlParts.query.auth_callback;
