@@ -38,6 +38,7 @@ module.exports = function (keycloak) {
           pathname: request.path,
           query: request.query
         };
+        console.log(urlParts)
 
         delete urlParts.query.code;
         delete urlParts.query.auth_callback;
@@ -52,6 +53,15 @@ module.exports = function (keycloak) {
         } catch (err) {
           console.log(err);
         }
+        let host = request.hostname;
+        let headerHost = request.headers.host.split(':');
+        let port = headerHost[1] || '';
+        let redirectUrl = request.protocol + '://' + host + (port === '' ? '' : ':' + port);
+        if(request.session.auth_redirect_uri != null || request.session.auth_redirect_uri != ''){
+            cleanUrl = redirectUrl + URL.parse(request.session.auth_redirect_uri).pathname;
+        }
+        console.log(URL.parse(request.session.auth_redirect_uri).pathname)
+        console.log(cleanUrl)
         response.redirect(cleanUrl);
       }).catch((err) => {
         keycloak.accessDenied(request, response, next);
