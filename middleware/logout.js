@@ -15,6 +15,8 @@
  */
 'use strict';
 
+const url = require('url');
+
 module.exports = function (keycloak, logoutUrl) {
   return function logout (request, response, next) {
     if (request.url !== logoutUrl) {
@@ -31,8 +33,12 @@ module.exports = function (keycloak, logoutUrl) {
     let headerHost = request.headers.host.split(':');
     let port = headerHost[1] || '';
     let redirectUrl = request.protocol + '://' + host + (port === '' ? '' : ':' + port) + '/';
+    if(request.session.auth_redirect_uri != null || request.session.auth_redirect_uri != ''){
+        redirectUrl = redirectUrl + url.parse(request.session.auth_redirect_uri).pathname;
+    }
+    console.log(redirectUrl)
     let keycloakLogoutUrl = keycloak.logoutUrl(redirectUrl);
-    console.log(redirectUrl);
+    console.log(keycloakLogoutUrl)
     response.redirect(keycloakLogoutUrl);
   };
 };
