@@ -32,7 +32,7 @@ module.exports = function (keycloak, logoutUrl) {
     let port = headerHost[1] || '';
     let redirectUrl = request.protocol + '://' + host + (port === '' ? '' : ':' + port) + '/';
     let keycloakLogoutUrl = keycloak.logoutUrl(redirectUrl);
-
+    console.log(redirectUrl);
     response.redirect(keycloakLogoutUrl);
   };
 };

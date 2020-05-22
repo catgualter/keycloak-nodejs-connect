@@ -19,6 +19,7 @@ const UUID = require('./../uuid');
 const URL = require('url');
 
 function forceCheckSSO (keycloak, request, response) {
+
   const host = request.hostname;
   const headerHost = request.headers.host.split(':');
   const port = headerHost[1] || '';
