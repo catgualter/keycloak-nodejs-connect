@@ -34,7 +34,6 @@ module.exports = function (keycloak) {
 
     keycloak.getGrantFromCode(request.query.code, request, response)
       .then(grant => {
-        console.log(request)
         let urlParts = {
           pathname: request.path,
           query: request.query
@@ -47,6 +46,8 @@ module.exports = function (keycloak) {
 
         let cleanUrl = URL.format(urlParts);
 
+     
+
         request.kauth.grant = grant;
         try {
           keycloak.authenticated(request);
@@ -57,12 +58,18 @@ module.exports = function (keycloak) {
         let headerHost = request.headers.host.split(':');
         let port = headerHost[1] || '';
         let redirectUrl = request.protocol + '://' + host + (port === '' ? '' : ':' + port);
+       
         if(request.session.auth_redirect_uri != null || request.session.auth_redirect_uri != ''){
-            cleanUrl =  request.session.auth_redirect_uri ;
+            let cleanAuth = URL.parse( request.session.auth_redirect_uri )
+            let params = new URLSearchParams(cleanAuth.search);
+            params.delete('auth_callback')
+            if(params.toString() == ""){
+                cleanUrl =   redirectUrl+cleanAuth.pathname ;
+            } else {
+                cleanUrl =   redirectUrl+cleanAuth.pathname + "?" + params.toString() ;
+            }
+           
         }
-        console.log("redirectUrl: " + redirectUrl)
-        console.log("auth_redirect_uri: " + request.session.auth_redirect_uri )
-        console.log("cleanUrl:" + cleanUrl )
         response.redirect(cleanUrl);
       }).catch((err) => {
         keycloak.accessDenied(request, response, next);
