@@ -56,11 +56,9 @@ module.exports = function (keycloak) {
         let headerHost = request.headers.host.split(':');
         let port = headerHost[1] || '';
         let redirectUrl = request.protocol + '://' + host + (port === '' ? '' : ':' + port);
-        if(request.session.auth_redirect_uri != null || request.session.auth_redirect_uri != ''){
-            cleanUrl = redirectUrl + URL.parse(request.session.auth_redirect_uri).pathname;
-        }
-        console.log(URL.parse(request.session.auth_redirect_uri).pathname)
-        console.log(cleanUrl)
+        // if(request.session.auth_redirect_uri != null || request.session.auth_redirect_uri != ''){
+        //     cleanUrl = redirectUrl + URL.parse(request.session.auth_redirect_uri).pathname + '?' +URL.parse(request.session.auth_redirect_uri).query ;
+        // }
         response.redirect(cleanUrl);
       }).catch((err) => {
         keycloak.accessDenied(request, response, next);
